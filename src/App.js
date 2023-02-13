@@ -1,9 +1,11 @@
 // import logo from './logo.svg';
+// import { Provider } from 'react-redux';
 import { Provider } from 'react-redux';
 import './App.css';
 import Body from './components/Body';
 import Head from './components/Head';
 import store from './utils/store';
+
 
 function App() {
   return (
