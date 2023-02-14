@@ -1,8 +1,16 @@
 import React from 'react'
+import Buttons from './Buttons'
 
+const  btns = ['All', 'Gamings', 'Songs', 'Live', 'Cricket', 'Football', 'Technology', 'Science', 'Soccer']
 const BuittonList = () => {
   return (
-    <div>BuittonList</div>
+    <div className='flex'>
+      {btns.map((ele,index) => {
+        return (
+          <Buttons key={index}  names = {ele}/>
+        )
+      })}
+    </div>
   )
 }
 
