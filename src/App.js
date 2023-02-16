@@ -6,6 +6,7 @@ import './App.css';
 import Body from './components/Body';
 import Head from './components/Head';
 import MainContainer from './components/MainContainer';
+import SideBar from './components/Sidebar';
 import WatchPage from './components/WatchPage';
 import store from './utils/store';
 
