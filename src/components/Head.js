@@ -6,6 +6,7 @@ import { YOUTUBE_SEARCH_API } from '../utils/constants';
 const Head = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [searchSuggestions, setSearchSuggestions] = useState([]);
+    const [showSuggestions, setShowSuggestions] = useState(true);
 
     useEffect(() => {
         const timer = setTimeout(() => {
@@ -20,7 +21,7 @@ const Head = () => {
         console.log(searchQuery);
         const data = await fetch(YOUTUBE_SEARCH_API + searchQuery);
         const json = await data.json();
-        setSearchSuggestions(json[1])
+        setSearchSuggestions(json[1]);
     };
 
     const dispatch = useDispatch();
@@ -49,18 +50,26 @@ const Head = () => {
                     className="w-[35rem] outline-none rounded-l-full border border-gray-300 bg-slate-200 py-2 pl-5"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
+                    onFocus = {() => setShowSuggestions(true)}
+                    onBlur = {() => setShowSuggestions(false)}
+                    // onScrollCapture = {() => setShowSuggestions(false)}
                 />
                 <button className="border border-gray-300 bg-slate-200 py-2 pl-2 pr-3 rounded-r-full  ">
                     🔍
                 </button>
                 <div>
-                    <ul className="fixed bg-white px-5 py-2 w-[35rem] rounded-lg shadow-lg border border-gray-200">
-                        {searchSuggestions.map((s) => (
-                            <li key={s} className=" py-2 hover:bg-gray-100">
-                                🔍 {s}
-                            </li>
-                        ))}
-                    </ul>
+                    {showSuggestions && (
+                        <ul className="absolute bg-white  w-[35rem] rounded-lg shadow-lg border border-gray-200">
+                            {searchSuggestions.map((s) => (
+                                <li
+                                    key={s}
+                                    className="px-5 py-2 hover:bg-gray-100"
+                                >
+                                    🔍 {s}
+                                </li>
+                            ))}
+                        </ul>
+                    )}
                 </div>
             </div>
             <div>
