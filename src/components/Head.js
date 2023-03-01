@@ -1,23 +1,32 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { toggleMenu } from '../utils/appSlice';
 import { YOUTUBE_SEARCH_API } from '../utils/constants';
 
-
 const Head = () => {
+    const [searchQuery, setSearchQuery] = useState('');
+    const [searchSuggestions, setSearchSuggestions] = useState([]);
 
-    const [searchQuery, setSearchQuery] = useState("")
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            getSearchSuggestions();
+        }, 200);
+        return () => {
+            clearTimeout(timer);
+        };
+    }, [searchQuery]);
 
     const getSearchSuggestions = async () => {
-        const data = await fetch(YOUTUBE_SEARCH_API + searchQuery)
+        console.log(searchQuery);
+        const data = await fetch(YOUTUBE_SEARCH_API + searchQuery);
         const json = await data.json();
-        console.log(json[1])
-    }
+        setSearchSuggestions(json[1])
+    };
 
-    const dispatch = useDispatch()
+    const dispatch = useDispatch();
     const toggleMenuHandler = () => {
-        dispatch(toggleMenu())
-    }
+        dispatch(toggleMenu());
+    };
 
     return (
         <div className="flex p-5 justify-between shadow-lg ">
@@ -39,11 +48,20 @@ const Head = () => {
                     type="text"
                     className="w-[35rem] outline-none rounded-l-full border border-gray-300 bg-slate-200 py-2 pl-5"
                     value={searchQuery}
-                    onChange = {(e) => setSearchQuery(e.target.value)}
+                    onChange={(e) => setSearchQuery(e.target.value)}
                 />
                 <button className="border border-gray-300 bg-slate-200 py-2 pl-2 pr-3 rounded-r-full  ">
-                    🔍 
+                    🔍
                 </button>
+                <div>
+                    <ul className="fixed bg-white px-5 py-2 w-[35rem] rounded-lg shadow-lg border border-gray-200">
+                        {searchSuggestions.map((s) => (
+                            <li key={s} className=" py-2 hover:bg-gray-100">
+                                🔍 {s}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
             </div>
             <div>
                 <img
