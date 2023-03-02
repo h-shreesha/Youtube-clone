@@ -1,16 +1,23 @@
 import React, { useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { toggleMenu } from '../utils/appSlice';
 import { YOUTUBE_SEARCH_API } from '../utils/constants';
+import { cacheResults } from '../utils/searchSlice';
 
 const Head = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [searchSuggestions, setSearchSuggestions] = useState([]);
     const [showSuggestions, setShowSuggestions] = useState(true);
 
+    const searchCache = useSelector((store) => store.search);
+
     useEffect(() => {
         const timer = setTimeout(() => {
-            getSearchSuggestions();
+            if (searchCache[searchQuery]) {
+                setSearchSuggestions(searchCache[searchQuery]);
+            } else {
+                getSearchSuggestions();
+            }
         }, 200);
         return () => {
             clearTimeout(timer);
@@ -22,6 +29,11 @@ const Head = () => {
         const data = await fetch(YOUTUBE_SEARCH_API + searchQuery);
         const json = await data.json();
         setSearchSuggestions(json[1]);
+        dispatch(
+            cacheResults({
+                [searchQuery]: json[1],
+            })
+        );
     };
 
     const dispatch = useDispatch();
@@ -50,8 +62,8 @@ const Head = () => {
                     className="w-[35rem] outline-none rounded-l-full border border-gray-300 bg-slate-200 py-2 pl-5"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    onFocus = {() => setShowSuggestions(true)}
-                    onBlur = {() => setShowSuggestions(false)}
+                    onFocus={() => setShowSuggestions(true)}
+                    onBlur={() => setShowSuggestions(false)}
                     // onScrollCapture = {() => setShowSuggestions(false)}
                 />
                 <button className="border border-gray-300 bg-slate-200 py-2 pl-2 pr-3 rounded-r-full  ">
